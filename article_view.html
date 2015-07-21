@@ -1,0 +1,111 @@
+<!--Admin guide view widget starts-->
+<div class="ag-bg ag-detail-page" id="article-show-{{ article.id }}">
+    <div class="ag-detail-left black-bg pull-left text-center">
+        <div class="ag-detail-intro" id="folder-show-{{folder.id}}">
+            <div class="burger">
+                <!--Hamburger Icon Start-->
+                <nav>
+                    <input id="menu_list_toggler" type="checkbox" style="display:none;" />
+                    <label for="menu_list_toggler">
+                        <b>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                  </b>
+                    </label>
+                </nav>
+                <!--Hamburger Icon End-->
+                <div style="display:none;" class="back-btn" title="Back to &quot;{{article.folder.name}}&quot;">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </div>
+                <input type="hidden" id="nav_upward" value="http://training.freshdesk.com/support/solutions/folders/{{ article.folder.id }}" />
+                <div class="ag-link-list-slide" style="display:none;">
+                    <!-- List starts-->
+                    <div class="ag-list article-view">
+                        {% for article.folder in article.category.folders %}
+                        <li>
+                            <div class="list-lead  folder-bg-{{ folder.id | modulo:9 }}">
+                                {{ folder | link_to_folder_with_count }}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </div>
+                    <!--List end-->
+                </div>
+                <div class="x"></div>
+                <div class="y"></div>
+                <div class="z"></div>
+            </div>
+            <div class="admin-icon"></div>
+            <h2 class="heading text-center">{{ article.folder.name }}</h2>
+            <p class="info-text text-center">{{ article.folder.description | h}}</p>
+        </div>
+    </div>
+    <div class="ag-detail-right pull-left white-bg">
+        <!-- Code for Navigator goes here -->
+      	<div class="navigator-wrapper" style="">
+            <ul class="navigator">
+                {% assign get_next_article = false %}
+                {% assign prev_article = "false" %}
+                {% assign next_article = "false" %}
+                {% for current_article in article.folder.articles %}
+                    {% if get_next_article %}
+                        {% assign next_article = current_article.url %}
+                        {% assign get_next_article = false %}
+                    {% endif %}
+                    {% if current_article.id == article.id %}
+                        {% assign get_next_article = true %}
+                        {% if forloop.first %}
+                            {% assign prev_article = "false" %}
+                        {% else %}
+                            {% assign prev_article = last_loop_article %}
+                        {% endif %}
+                        {% if forloop.last %}
+                            {% assign get_next_article = false %}
+                        {% endif %}
+                    {% endif %}
+                {% assign last_loop_article = current_article.url %}
+                {% endfor %}
+                {% assign completed_flag = true %}
+              	<a {% if prev_article == "false" %}style="visibility: hidden"{% endif %} href="{{prev_article}}"><li title="Previous article" class="navigator_previous_article">Previous Article</li></a>
+                {% for current_article in article.folder.articles %}
+              		<a href="{{current_article.url}}"><li class="navigator_article_link {% if current_article.id == article.id %}{% assign completed_flag = false %}navigator_current_article{% else %}{% if completed_flag %}navigator_completed_article{% endif %}{% endif %}" title="{{current_article.title}}"></li></a>
+                {% endfor %}
+              	<a {% if next_article == "false" %}style="visibility: hidden;"{% endif %}href="{{next_article}}"><li title="Next article" class="navigator_next_article">Next Article</li></a>
+            </ul>
+      	</div>
+        <!-- Code for Navigator ends here -->
+        <h2 class="heading">{{ article.title | h}}
+              <a href="javascript:print();" class="icon-print solution-print-icon" title="{% translate portal.print_title %}"></a>
+        </h2>
+        <!-- <p>{% translate portal.article.modified_on %} {{ article.modified_on | short_day_with_time }}</p>-->
+
+        <div>
+            {% for tag in article.tags %}
+            <span class="label">{{tag.name | h}}</span> {% endfor %}
+        </div>
+
+        <article class="article-body" id="article-body">
+            {{ article.body }}
+        </article>
+        {{article | article_attachments}} {{article | article_voting }}
+    </div>
+</div>
+<!--Admin guide view widget End-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        jQuery(".back-btn").fadeIn('slow');
+        jQuery("label").click(function () {
+            jQuery(".ag-link-list-slide, .ag-detail-intro > h2.heading, .ag-detail-intro > p.info-text").slideToggle();
+        });
+        jQuery(".back-btn").click(function () {
+            window.location.replace(document.getElementById("nav_upward").value);
+        });
+      //jQuery(".navigator > li").click(function(e) {
+      //	e.target.
+      //})
+    });
+</script>

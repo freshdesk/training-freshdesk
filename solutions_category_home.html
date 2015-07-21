@@ -1,0 +1,55 @@
+{% if category.name == 'Agent Guide' %}
+<script>
+    window.location.replace("http://training.freshdesk.com/support/solutions/folders/3000005584");
+</script>
+
+{% else %}
+
+<div class="ag-bg">
+
+    <div class="ag-left-panel black-bg pull-left text-center category-bg-{{category.id | modulo:2}}">
+        <div class="ag-intro">
+            <div class="admin-icon"></div>
+            <div class="guide-icon"></div>
+            <h2>{{ category.name | h}} </h2>
+            <p class="pwidth70">
+                {{ category.description }}
+            </p>
+            <div style="display:none;" class="back-btn" title="Back to &quot;Solutions Home&quot;">
+                <i></i>
+                <i></i>
+                <i></i>
+            </div>
+            <input type="hidden" id="nav_upward" value="http://training.freshdesk.com/support/solutions/{{ folder.category.id }}" />
+        </div>
+    </div>
+
+    <div class="ag-right-panel pull-left white-bg">
+        <div class="ag-list">
+            {% for folder in category.folders %}
+            <li>
+                <div class="list-lead folder-bg-{{ folder.id | modulo:9 }} {{folder.name }}">
+                    {{ folder | link_to_folder_with_count }}
+                </div>
+
+            </li>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+<script>
+    jQuery(document).ready(function () {
+        jQuery(".back-btn").fadeIn('slow');
+        jQuery(".back-btn").click(function () {
+            if (jQuery(".ag-intro > h2").html() == "The Agent Guide") {
+                window.location.replace("http://training.freshdesk.com/support/solutions");
+            } else {
+                window.location.replace(document.getElementById("nav_upward").value);
+            }
+        });
+    });
+</script>
+
+{% endif %}
